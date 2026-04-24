@@ -10,6 +10,6 @@ crane delete xxx.cr.de-fra.ionos.com/os/devuan-excalibur@sha256:3accbb3556ba753d
 
 Löscht zB gemäß hash, auch wenn kein tag mehr am manifest hängt.
 
-Leider finde ich _crane_ nicht in den offizielen Debian repositories.
+Leider finde ich _crane_ nicht in den offiziellen Debian-Repositories.
 
 ...
