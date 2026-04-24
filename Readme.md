@@ -19,3 +19,8 @@ Delete an OCI image manifest by digest, even if no tag points to it anymore:
 ```bash
 crane delete xxx.cr.de-fra.ionos.com/os/devuan-excalibur@sha256:3accbb3556ba753d5539a45048a69670a17dee15a105877a18716d43b5601731
 ```
+
+## Notes
+
+This package intentionally uses the upstream release binary instead of rebuilding crane from Go source.
+The goal is to provide a small, predictable internal Debian package for operational use, not to replace a full Debian source package.
