@@ -1,6 +1,9 @@
+.PHONY: all latest print-vars download unpack installed-size control docs deb install clean
+
 SHELL := /bin/bash
 
-PACKAGE      := crane
+PACKAGE      := hygi-crane
+PROVIDES     := crane
 MAINTAINER   := hygi.de Debian Packager <it@hygi.de>
 SECTION      := utils
 PRIORITY     := optional
@@ -38,7 +41,8 @@ VERSION ?= $(shell curl -fsSL https://api.github.com/repos/google/go-containerre
 HYGI_REV ?= 0
 
 UPSTREAM_VERSION := $(VERSION)
-PKG_VERSION      := $(patsubst v%,%,$(UPSTREAM_VERSION))-1~hygi$(HYGI_REV)
+#PKG_VERSION      := $(patsubst v%,%,$(UPSTREAM_VERSION))-1~hygi$(HYGI_REV)
+PKG_VERSION      := $(patsubst v%,%,$(UPSTREAM_VERSION))-1
 
 ASSET            := go-containerregistry_Linux_$(UPSTREAM_ARCH).tar.gz
 BASE_URL         := https://github.com/google/go-containerregistry/releases/download/$(UPSTREAM_VERSION)
@@ -49,8 +53,6 @@ DOWNLOAD_DIR     := $(BUILD_DIR)/download
 INSTALLED_SIZE_FILE := $(BUILD_DIR)/installed-size
 
 DEB_NAME         := $(PACKAGE)_$(PKG_VERSION)_$(DEBIAN_ARCH).deb
-
-.PHONY: all latest print-vars download unpack installed-size control docs deb install clean
 
 all: deb
 
@@ -91,6 +93,7 @@ control: installed-size
 	@mkdir -p "$(PKG_ROOT)/DEBIAN"
 	@printf '%s\n' \
 		'Package: $(PACKAGE)' \
+		'Provides: $(PROVIDES)' \
 		'Version: $(PKG_VERSION)' \
 		'Section: $(SECTION)' \
 		'Priority: $(PRIORITY)' \
@@ -98,6 +101,7 @@ control: installed-size
 		'Installed-Size: '"$$(cat "$(INSTALLED_SIZE_FILE)")" \
 		'Maintainer: $(MAINTAINER)' \
 		'Depends: ca-certificates' \
+		'Conflicts: crane' \
 		'Homepage: $(HOMEPAGE)' \
 		'Description: $(DESCRIPTION)' \
 		' Crane is a command-line tool from google/go-containerregistry for working' \
@@ -137,9 +141,6 @@ docs: control
 deb: docs
 	dpkg-deb --build --root-owner-group "$(PKG_ROOT)" "$(DEB_NAME)"
 	@echo "Built $(DEB_NAME)"
-
-install: deb
-	sudo apt install ./$(DEB_NAME)
 
 clean:
 	rm -rf "$(BUILD_DIR)" "$(PACKAGE)"_*.deb
